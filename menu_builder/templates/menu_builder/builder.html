@@ -1,0 +1,106 @@
+{% extends 'menu_builder/base.html' %}
+{% load static %}
+
+{% block title %}Menu Builder - {{ menu.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/menu-builder.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="menu-builder-container">
+    <div class="builder-header">
+        <div class="header-left">
+            <h2>Menu Builder: {{ menu.name }}</h2>
+            <select id="menu-selector" class="menu-selector">
+                {% for m in menus %}
+                <option value="{{ m.id }}" {% if m.id == menu.id %}selected{% endif %}>{{ m.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="header-actions">
+            <button id="save-menu" class="btn btn-success">Save Menu</button>
+            <button id="add-item" class="btn btn-primary">Add Item</button>
+            <a href="{% url 'edit_menu' menu.id %}" class="btn btn-secondary">Menu Settings</a>
+        </div>
+    </div>
+
+    <div class="builder-content">
+        <div class="menu-preview-panel">
+            <h3>Menu Preview</h3>
+            <div id="menu-preview" class="menu-preview">
+                <!-- Menu items will be rendered here -->
+            </div>
+        </div>
+
+        <div class="menu-editor-panel">
+            <h3>Menu Structure</h3>
+            <div id="menu-structure" class="menu-structure">
+                <!-- Drag and drop menu structure will be here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Editor Modal -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Menu Item</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="item-form">
+                    <input type="hidden" id="item-id">
+                    <input type="hidden" id="item-parent-id">
+                    
+                    <div class="form-group">
+                        <label for="item-title">Title *</label>
+                        <input type="text" id="item-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="item-url">URL *</label>
+                        <input type="text" id="item-url" required placeholder="/about/ or https://example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="item-external">
+                            External URL
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="item-icon">Icon Class (optional)</label>
+                        <input type="text" id="item-icon" placeholder="fa fa-home">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="item-css-class">CSS Class (optional)</label>
+                        <input type="text" id="item-css-class" placeholder="custom-class">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="delete-item">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.menuId = {{ menu.id }};
+    window.menuItemsUrl = "{% url 'get_menu_items' menu.id %}";
+    window.saveMenuUrl = "{% url 'save_menu_structure' menu.id %}";
+    window.createItemUrl = "{% url 'create_menu_item' menu.id %}";
+    window.deleteItemUrl = "/api/item/";
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/menu-builder.js' %}"></script>
+{% endblock %}
+

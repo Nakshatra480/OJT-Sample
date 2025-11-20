@@ -1,0 +1,39 @@
+{% extends 'menu_builder/base.html' %}
+
+{% block title %}Menu List - Menu Builder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>All Menus</h2>
+        <a href="{% url 'create_menu' %}" class="btn btn-primary">Create New Menu</a>
+    </div>
+    
+    <div class="menu-grid">
+        {% for menu in menus %}
+        <div class="menu-card">
+            <h3>{{ menu.name }}</h3>
+            <p class="menu-slug">{{ menu.slug }}</p>
+            {% if menu.description %}
+            <p class="menu-description">{{ menu.description }}</p>
+            {% endif %}
+            <div class="menu-actions">
+                <a href="{% url 'menu_builder' menu.id %}" class="btn btn-primary">Edit Menu</a>
+                <a href="{% url 'edit_menu' menu.id %}" class="btn btn-secondary">Settings</a>
+            </div>
+            <div class="menu-meta">
+                <span class="badge {% if menu.is_active %}badge-success{% else %}badge-inactive{% endif %}">
+                    {% if menu.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+                <span class="menu-date">{{ menu.created_at|date:"M d, Y" }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <p>No menus found. <a href="{% url 'create_menu' %}">Create your first menu</a></p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
